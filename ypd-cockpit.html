@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YPD — Cockpit Stratégique</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0C0F0A;
+    --surface: #141710;
+    --card: #1C1F18;
+    --border: #2A2D25;
+    --lime: #B8FF47;
+    --lime-dim: #7AB52E;
+    --amber: #FFB547;
+    --red: #FF4D4D;
+    --blue: #47BFFF;
+    --text: #E8EDE0;
+    --muted: #6B7060;
+    --white: #F5F8F0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Familjen Grotesk', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--lime);
+    letter-spacing: 1px;
+  }
+
+  .logo span { color: var(--muted); }
+
+  .topbar-tabs {
+    display: flex;
+    gap: 4px;
+  }
+
+  .tab-btn {
+    padding: 8px 20px;
+    background: none;
+    border: 1px solid transparent;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+  }
+
+  .tab-btn:hover { color: var(--text); border-color: var(--border); }
+  .tab-btn.active { background: var(--lime); color: var(--bg); border-color: var(--lime); font-weight: 700; }
+
+  .live-dot {
+    width: 8px; height: 8px;
+    background: var(--lime);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* SECTIONS */
+  .panel { display: none; padding: 32px; max-width: 1200px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* PLANNING SECTION */
+  .planning-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: start;
+    margin-bottom: 32px;
+  }
+
+  .date-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--lime);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .planning-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 48px;
+    line-height: 1;
+    color: var(--white);
+  }
+
+  .planning-title em { color: var(--lime); font-style: italic; }
+
+  .daily-score {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 28px;
+    text-align: center;
+    min-width: 140px;
+  }
+
+  .score-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--lime);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* TIME BLOCKS */
+  .timeblocks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .block {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .block::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .block.impact-high::before { background: var(--lime); }
+  .block.impact-med::before { background: var(--amber); }
+  .block.impact-low::before { background: var(--border); }
+  .block.impact-auto::before { background: var(--blue); }
+
+  .block:hover { border-color: var(--lime); }
+  .block.done { opacity: 0.45; }
+  .block.done .block-title { text-decoration: line-through; }
+
+  .block-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .block-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 3px;
+  }
+
+  .block-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .block-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+  }
+
+  .tag-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .pill-high { background: rgba(184,255,71,0.15); color: var(--lime); }
+  .pill-med { background: rgba(255,181,71,0.15); color: var(--amber); }
+  .pill-auto { background: rgba(71,191,255,0.15); color: var(--blue); }
+  .pill-low { background: rgba(107,112,96,0.15); color: var(--muted); }
+
+  /* IMPACT MATRIX */
+  .matrix-section {
+    margin-bottom: 32px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .matrix-cell {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+
+  .matrix-cell h4 {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .matrix-cell.q1 h4 { color: var(--lime); }
+  .matrix-cell.q2 h4 { color: var(--amber); }
+  .matrix-cell.q3 h4 { color: var(--blue); }
+  .matrix-cell.q4 h4 { color: var(--muted); }
+
+  .matrix-item {
+    font-size: 13px;
+    color: var(--text);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .matrix-item:last-child { border-bottom: none; }
+  .matrix-item span { color: var(--muted); font-size: 11px; display: block; }
+
+  /* VEILLE SECTION */
+  .intel-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 900px) {
+    .intel-grid { grid-template-columns: 1fr 1fr; }
+    .planning-header { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .intel-grid { grid-template-columns: 1fr; }
+    .panel { padding: 20px; }
+    .matrix-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 12px 16px; }
+    .topbar-tabs { gap: 2px; }
+    .tab-btn { padding: 8px 12px; font-size: 10px; }
+    .planning-title { font-size: 36px; }
+    .block { grid-template-columns: 70px 1fr; }
+    .block-tags { display: none; }
+  }
+
+  .intel-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+
+  .intel-card:hover { border-color: var(--lime); }
+
+  .intel-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin-bottom: 8px;
+  }
+
+  .intel-card h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 19px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .intel-card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .intel-stat {
+    margin-top: 14px;
+    background: var(--surface);
+    padding: 10px 14px;
+    border-left: 2px solid var(--lime);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  /* OPPORTUNITIES */
+  .opp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .opp-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 18px 22px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .opp-icon {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .opp-item h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 3px;
+  }
+
+  .opp-item p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .opp-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .opp-score span {
+    display: block;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* HOOK GENERATOR */
+  .hook-gen {
+    background: var(--card);
+    border: 1px solid var(--lime);
+    padding: 28px;
+    margin-bottom: 32px;
+  }
+
+  .hook-gen-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin-bottom: 20px;
+  }
+
+  .hook-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .hook-topic-btn {
+    padding: 8px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .hook-topic-btn:hover, .hook-topic-btn.selected {
+    background: rgba(184,255,71,0.1);
+    border-color: var(--lime);
+    color: var(--lime);
+  }
+
+  .hook-output {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    min-height: 80px;
+    font-style: italic;
+    border-left: 3px solid var(--lime);
+  }
+
+  .hook-gen-btn {
+    margin-top: 14px;
+    background: var(--lime);
+    color: var(--bg);
+    border: none;
+    padding: 12px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .hook-gen-btn:hover { opacity: 0.85; }
+  .hook-gen-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* RISKS */
+  .risk-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) { .risk-list { grid-template-columns: 1fr; } }
+
+  .risk-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    padding: 18px 20px;
+  }
+
+  .risk-item h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+
+  .risk-item p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* PROGRESS BAR */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .progress-label-text {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 120px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s;
+  }
+
+  .progress-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    min-width: 40px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">YPD<span>·</span>COCKPIT</div>
+  <div class="topbar-tabs">
+    <button class="tab-btn active" onclick="showPanel('planning', this)">Planning</button>
+    <button class="tab-btn" onclick="showPanel('veille', this)">Veille</button>
+    <button class="tab-btn" onclick="showPanel('hooks', this)">Hooks IA</button>
+  </div>
+  <div class="live-dot"></div>
+</div>
+
+<!-- =========== PLANNING =========== -->
+<div id="planning" class="panel active">
+
+  <div class="planning-header">
+    <div>
+      <div class="date-display" id="live-date">MERCREDI · 11 MARS 2026</div>
+      <div class="planning-title">Ta journée<br><em>stratégique</em></div>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.7">Clique sur chaque bloc pour le marquer comme fait. Focus : contenu 100% écrit, zéro matos nécessaire.</p>
+    </div>
+    <div class="daily-score">
+      <div class="score-num" id="score-num">0</div>
+      <div class="score-label">/ 7 faits</div>
+    </div>
+  </div>
+
+  <div class="section-label">Blocs de la journée</div>
+
+  <div class="timeblocks" id="timeblocks">
+
+    <div class="block impact-high" onclick="toggleBlock(this)">
+      <div class="block-time">07h00</div>
+      <div>
+        <div class="block-title">Veille 15 min — Quoi de neuf dans ta niche ?</div>
+        <div class="block-desc">Scroll Instagram + TikTok : artistes congolais/africains, créateurs de contenu. Note 1 idée qui t'inspire ou t'énerve.</div>
+      </div>
+      <div class="block-tags">
+        <span class="tag-pill pill-high">Impact ↑↑</span>
+        <span class="tag-pill pill-low">15 min</span>
+      </div>
+    </div>
+
+    <div class="block impact-high" onclick="toggleBlock(this)">
+      <div class="block-time">07h30</div>
+      <div>
+        <div class="block-title">Écrire le post du jour</div>
+        <div class="block-desc">Ouvre ton fichier d'idées. Prends le hook du plan semaine. Écris sans corriger. 20 min brut, 10 min édition.</div>
+      </div>
+      <div class="block-tags">
+        <span class="tag-pill pill-high">Impact ↑↑</span>
+        <span class="tag-pill pill-low">30 min</span>
+      </div>
+    </div>
+
+    <div class="block impact-high" onclick="toggleBlock(this)">
+      <div class="block-time">08h00</div>
+      <div>
+        <div class="block-title">Publier + 30 min d'engagement actif</div>
+        <div class="block-desc">Publie. Puis commente 5 posts dans ta niche (vrai commentaire, pas emoji). Réponds à tous tes commentaires dans l'heure.</div>
+      </div>
+      <div class="block-tags">
+        <span class="tag-pill pill-high">Impact ↑↑</span>
+        <span class="tag-pill pill-low">30 min</span>
+      </div>
+    </div>
+
+    <div class="block impact-med" onclick="toggleBlock(this)">
+      <div class="block-time">12h00</div>
+      <div>
+        <div class="block-title">Prospection DM — 3 contacts par jour</div>
+        <div class="block-desc">Identifie 3 artistes, studios, marques de Brazzaville. Envoie un message personnalisé (pas de copier-coller). Objectif : relation, pas vente.</div>
+      </div>
+      <div class="block-tags">
+        <span class="tag-pill pill-med">Prospection</span>
+        <span class="tag-pill pill-low">20 min</span>
+      </div>
+    </div>
+
+    <div class="block impact-auto" onclick="toggleBlock(this)">
+      <div class="block-time">14h00</div>
+      <div>
+        <div class="block-title">Banque d'idées — Remplir le pipeline</div>
+        <div class="block-desc">Écris 3 hooks bruts pour les prochains posts. Pas besoin de les finir — juste capturer. Une idée par ligne dans tes notes.</div>
+      </div>
+      <div class="block-tags">
+        <span class="tag-pill pill-auto">Pipeline</span>
+        <span class="tag-pill pill-low">15 min</span>
+      </div>
+    </div>
+
+    <div class="block impact-med" onclick="toggleBlock(this)">
+      <div class="block-time">18h00</div>
+      <div>
+        <div class="block-title">Analyse des stats du post</div>
+        <div class="block-desc">Combien de vues ? Saves ? Commentaires ? Note le chiffre. C'est ta seule métrique quotidienne. Pas de panique, juste observer.</div>
+      </div>
+      <div class="block-tags">
+        <span class="tag-pill pill-med">Analyse</span>
+        <span class="tag-pill pill-low">10 min</span>
+      </div>
+    </div>
+
+    <div class="block impact-low" onclick="toggleBlock(this)">
+      <div class="block-time">20h00</div>
+      <div>
+        <div class="block-title">Engagement soir — Stories ou réponses</div>
+        <div class="block-desc">Publie une story interactive (question, sondage). Réponds aux DM. Montre que tu es humain et présent, pas juste un contenu automatique.</div>
+      </div>
+      <div class="block-tags">
+        <span class="tag-pill pill-low">Communauté</span>
+        <span class="tag-pill pill-low">15 min</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MATRICE IMPACT -->
+  <div class="matrix-section">
+    <div class="section-label">Matrice Priorités</div>
+    <div class="matrix-grid">
+      <div class="matrix-cell q1">
+        <h4>🟢 Faire aujourd'hui</h4>
+        <div class="matrix-item">Écrire + publier le post<span>Impact direct sur la croissance</span></div>
+        <div class="matrix-item">Engagement actif (commenter)<span>Visibilité organique immédiate</span></div>
+        <div class="matrix-item">Répondre aux commentaires<span>Signal fort pour l'algorithme</span></div>
+      </div>
+      <div class="matrix-cell q2">
+        <h4>🟡 Planifier cette semaine</h4>
+        <div class="matrix-item">Trouver le nom du podcast<span>Fondation de ton personal brand</span></div>
+        <div class="matrix-item">Modifier la bio Instagram<span>Clarté = plus d'abonnements</span></div>
+        <div class="matrix-item">Identifier 3 invités potentiels<span>Construction du projet podcast</span></div>
+      </div>
+      <div class="matrix-cell q3">
+        <h4>🔵 Automatiser / Déléguer</h4>
+        <div class="matrix-item">Programmation des posts<span>Utilise Later ou Meta Business Suite</span></div>
+        <div class="matrix-item">Réponses commentaires génériques<span>Prépare 5 templates de réponse</span></div>
+        <div class="matrix-item">Hashtags research<span>Fais-le 1x/mois, pas chaque post</span></div>
+      </div>
+      <div class="matrix-cell q4">
+        <h4>⚫ Arrêter immédiatement</h4>
+        <div class="matrix-item">Poster des flyers d'autres<span>Dilue ton identité, aucun retour</span></div>
+        <div class="matrix-item">Selfies sans contexte/histoire<span>Contenu invisible pour l'algo</span></div>
+        <div class="matrix-item">Checker les stats 10x/jour<span>Distraction, pas de valeur</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RÈGLE DU 80/20 -->
+  <div class="section-label">Répartition de ton temps</div>
+  <div style="background:var(--card);border:1px solid var(--border);padding:24px;margin-bottom:32px;">
+    <div class="progress-row">
+      <span class="progress-label-text">Création contenu</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:40%;background:var(--lime)"></div></div>
+      <span class="progress-val">40%</span>
+    </div>
+    <div class="progress-row">
+      <span class="progress-label-text">Engagement</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:30%;background:var(--amber)"></div></div>
+      <span class="progress-val">30%</span>
+    </div>
+    <div class="progress-row">
+      <span class="progress-label-text">Prospection</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:20%;background:var(--blue)"></div></div>
+      <span class="progress-val">20%</span>
+    </div>
+    <div class="progress-row">
+      <span class="progress-label-text">Analyse / Veille</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:10%;background:var(--muted)"></div></div>
+      <span class="progress-val">10%</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- =========== VEILLE =========== -->
+<div id="veille" class="panel">
+
+  <div style="margin-bottom:32px;">
+    <div class="date-display">RAPPORT DE VEILLE · MARS 2026</div>
+    <div class="planning-title">Intelligence<br><em>marché</em></div>
+    <p style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.7">Musique · Mode · Culture africaine. Données fraîches — ce que tu dois savoir pour créer du contenu pertinent.</p>
+  </div>
+
+  <!-- TENDANCES MUSIQUE -->
+  <div class="section-label">Musique africaine 2026</div>
+  <div class="intel-grid">
+    <div class="intel-card">
+      <div class="intel-source">Tendance #1</div>
+      <h3>La musique africaine domine le monde — ce n'est plus une promesse</h3>
+      <p>En 2026, la musique africaine ne cherche plus à percer sur la scène mondiale — elle la domine. Burna Boy, Tyla, Rema et Asake cartonnent sur tous les continents. C'est le moment idéal pour documenter cette scène.</p>
+      <div class="intel-stat">→ Angle pour toi : "Pourquoi Brazzaville n'est pas encore dans cette conversation — et ce qui va changer"</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-source">Tendance #2</div>
+      <h3>L'Afro House explose — +778% de téléchargements en un an</h3>
+      <p>L'Afro House génère à lui seul environ 70% de la croissance de la House mondiale. Ce son hybride (rythmes africains + électronique) s'impose de Los Angeles à Istanbul. Un genre à documenter de l'intérieur.</p>
+      <div class="intel-stat">→ Angle pour toi : "Le son qui unit Lagos, Brazza et Dubai — et personne n'en parle au Congo"</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-source">Tendance #3</div>
+      <h3>Nouveaux genres émergents : Lekompo, Krio Fusion, Way-Way</h3>
+      <p>L'Afrique du Sud, Sierra Leone et l'Algérie lancent de nouveaux genres locaux qui se répandent mondialement via YouTube et les réseaux. Chaque continent africain a son son qui monte.</p>
+      <div class="intel-stat">→ Angle pour toi : "Le prochain genre qui va exploser vient peut-être du Congo — voilà pourquoi"</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-source">Tendance #4</div>
+      <h3>La fragmentation des goûts tue le mainstream — les créateurs deviennent les prescripteurs</h3>
+      <p>Selon le rapport Sounds of 2026, la culture dominante est remplacée par des habitudes d'écoute ultra-fragmentées. Les créateurs de contenu, pas les labels, dictent maintenant les micro-tendances.</p>
+      <div class="intel-stat">→ Angle pour toi : Tu es le prescripteur musical de ta communauté. Assume ce rôle.</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-source">Tendance #5</div>
+      <h3>La musique africaine s'impose aux Victoires de la Musique en France</h3>
+      <p>Les Victoires de la Musique 2026 confirment une bascule : les trajectoires africaines et diasporiques sont au cœur de la musique française contemporaine. L'Afrique irrigue l'Europe musicalement.</p>
+      <div class="intel-stat">→ Angle pour toi : "Ce que la France a compris sur la musique africaine que nous, on n'a pas encore digéré"</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-source">Tendance #6</div>
+      <h3>La rumba congolaise — patrimoine UNESCO sous-exploité sur les réseaux</h3>
+      <p>Classée au patrimoine immatériel de l'UNESCO, la rumba congolaise est quasi-absente des conversations Instagram mondiales malgré son statut. Personne ne la documente vraiment en 2026.</p>
+      <div class="intel-stat">→ Angle pour toi : C'est ton avantage géographique et culturel unique. Exploite-le.</div>
+    </div>
+  </div>
+
+  <!-- TENDANCES MODE -->
+  <div class="section-label">Mode africaine 2026</div>
+  <div class="intel-grid">
+    <div class="intel-card">
+      <div class="intel-source">Mode #1</div>
+      <h3>Le marché de la mode africaine estimé à 31 milliards de dollars — en pleine expansion</h3>
+      <p>Porté par une population jeune, une urbanisation rapide et le e-commerce, le marché explose. Les créateurs africains exportent leur talent internationalement comme jamais.</p>
+      <div class="intel-stat">→ Angle pour toi : Documenter les créateurs de mode de Brazzaville = niche ultra-rare</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-source">Mode #2</div>
+      <h3>Africa Fashion Up 2026 — 5 créateurs africains propulsés à Paris avec Balenciaga</h3>
+      <p>Le programme lance sa 6e édition, candidatures ouvertes jusqu'en avril 2026. Des créateurs africains défilent à Paris avec accès à Balenciaga, Galeries Lafayette et HEC.</p>
+      <div class="intel-stat">→ Angle pour toi : "Y a-t-il un créateur de mode au Congo qui devrait être à Paris ?"</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-source">Mode #3</div>
+      <h3>Africa Fashion — expo au Musée du Quai Branly jusqu'au 12 juillet 2026</h3>
+      <p>Une exposition événement consacrée à l'essor de la mode africaine contemporaine. Entre patrimoine textile et créations audacieuses — le monde regarde l'Afrique créer.</p>
+      <div class="intel-stat">→ Angle pour toi : Connecter mode + musique congolaise = contenu unique et premium</div>
+    </div>
+  </div>
+
+  <!-- OPPORTUNITÉS -->
+  <div class="section-label">Opportunités directes pour @youngpablo_director</div>
+  <div class="opp-list">
+    <div class="opp-item">
+      <div class="opp-icon" style="background:rgba(184,255,71,0.1)">🎯</div>
+      <div>
+        <h4>Documenter la scène créative de Brazzaville</h4>
+        <p>Musiciens, créateurs de mode, photographes, réalisateurs de Brazza. Zéro compte Instagram fait ça sérieusement. Tu as l'accès géographique, la crédibilité de terrain et le métier de réalisateur.</p>
+      </div>
+      <div class="opp-score" style="color:var(--lime)">9/10<span>potentiel</span></div>
+    </div>
+    <div class="opp-item">
+      <div class="opp-icon" style="background:rgba(255,181,71,0.1)">🎙️</div>
+      <div>
+        <h4>Podcast sur l'industrie musicale africaine francophone</h4>
+        <p>Il n'existe presque pas de podcast francophone sérieux sur la business et la création musicale africaine. Le marché existe (voir l'explosion Afrobeats en France), la niche est libre.</p>
+      </div>
+      <div class="opp-score" style="color:var(--amber)">8/10<span>potentiel</span></div>
+    </div>
+    <div class="opp-item">
+      <div class="opp-icon" style="background:rgba(71,191,255,0.1)">📽️</div>
+      <div>
+        <h4>Clips vidéo pour artistes locaux — positionnement "réalisateur documentariste"</h4>
+        <p>La demande de clips professionnels explose avec la montée du streaming africain. Te positionner comme le réalisateur qui comprend la culture congolaise = avantage concurrentiel énorme.</p>
+      </div>
+      <div class="opp-score" style="color:var(--blue)">8/10<span>potentiel</span></div>
+    </div>
+    <div class="opp-item">
+      <div class="opp-icon" style="background:rgba(255,77,77,0.1)">⚠️</div>
+      <div>
+        <h4>Risque : Rester généraliste trop longtemps</h4>
+        <p>Si tu ne choisis pas UN positionnement clair dans les 4 prochaines semaines, l'algorithme ne sait pas à qui te recommander. La dispersion actuelle (réal + photo + design + flyers) est ton frein #1.</p>
+      </div>
+      <div class="opp-score" style="color:var(--red)">⚠️<span>risque</span></div>
+    </div>
+  </div>
+
+  <!-- RISQUES -->
+  <div class="section-label">Risques à anticiper</div>
+  <div class="risk-list">
+    <div class="risk-item">
+      <h4>Saturation des carousels "culture africaine"</h4>
+      <p>Le format est déjà très utilisé par les comptes diaspora. Si tu fais du carousel sans angle unique, tu te noies dans la masse. Toujours avoir un angle que les autres n'ont pas traité.</p>
+    </div>
+    <div class="risk-item">
+      <h4>Attendre d'avoir le "bon matos" pour commencer</h4>
+      <p>Le contenu écrit performe autant que le video si le fond est solide. Attendre le micro = perdre 6 mois d'audience construite. Commence maintenant, améliore l'équipement après.</p>
+    </div>
+    <div class="risk-item">
+      <h4>Copier les grandes références sans adapter</h4>
+      <p>Burna Boy, Tyla — leur recette ne fonctionnera pas pour un compte Brazza de 936 abonnés. Ton avantage est d'être local et authentique, pas de singer le global.</p>
+    </div>
+    <div class="risk-item">
+      <h4>Publier de manière irrégulière</h4>
+      <p>L'algorithme Instagram pénalise l'irrégularité. 3 posts/semaine de qualité battent 10 posts/semaine de qualité variable. La constance prime toujours sur la quantité.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- =========== HOOKS IA =========== -->
+<div id="hooks" class="panel">
+
+  <div style="margin-bottom:32px;">
+    <div class="date-display">GÉNÉRATEUR DE HOOKS</div>
+    <div class="planning-title">Ton premier<br><em>mot</em> compte</div>
+    <p style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.7">Sélectionne un sujet, génère un hook IA personnalisé pour @youngpablo_director. Adapte, ne copie pas.</p>
+  </div>
+
+  <div class="hook-gen">
+    <div class="hook-gen-title">→ Choisir le sujet du post</div>
+    <div class="hook-options">
+      <button class="hook-topic-btn" onclick="selectTopic(this, 'musique congolaise')">Musique congolaise</button>
+      <button class="hook-topic-btn" onclick="selectTopic(this, 'réalisation de clip vidéo')">Réalisation clip</button>
+      <button class="hook-topic-btn" onclick="selectTopic(this, 'podcast africain')">Podcast</button>
+      <button class="hook-topic-btn" onclick="selectTopic(this, 'scène créative de Brazzaville')">Scène Brazza</button>
+      <button class="hook-topic-btn" onclick="selectTopic(this, 'coulisses d\'un tournage')">Coulisses tournage</button>
+      <button class="hook-topic-btn" onclick="selectTopic(this, 'industrie musicale africaine')">Industrie musicale</button>
+      <button class="hook-topic-btn" onclick="selectTopic(this, 'mode et culture africaine')">Mode africaine</button>
+      <button class="hook-topic-btn" onclick="selectTopic(this, 'rumba congolaise et modernité')">Rumba congolaise</button>
+    </div>
+    <div class="hook-output" id="hook-output">Sélectionne un sujet ci-dessus, puis clique sur "Générer"...</div>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap;">
+      <button class="hook-gen-btn" onclick="generateHook()" id="hook-btn" disabled>GÉNÉRER LE HOOK</button>
+      <button class="hook-gen-btn" style="background:var(--surface);color:var(--lime);border:1px solid var(--lime);" onclick="copyHook()" id="copy-hook-btn" disabled>COPIER</button>
+      <span id="hook-status" style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;"></span>
+    </div>
+  </div>
+
+  <!-- HOOKS PRÊTS À L'EMPLOI -->
+  <div class="section-label">Hooks prêts · Adapte avec ton vécu réel</div>
+  <div style="display:flex;flex-direction:column;gap:10px;">
+
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--lime);padding:20px 24px;">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--lime);margin-bottom:10px;font-family:'JetBrains Mono',monospace">Opinion clivante</div>
+      <div style="font-size:14px;font-style:italic;color:var(--text);line-height:1.8">"La scène musicale de Brazzaville a un problème.<br>Pas de manque de talent.<br>Un problème que personne ne veut nommer publiquement.<br>Je vais le faire."</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--amber);padding:20px 24px;">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:10px;font-family:'JetBrains Mono',monospace">Journal de bord</div>
+      <div style="font-size:14px;font-style:italic;color:var(--text);line-height:1.8">"Un artiste m'a proposé un projet cette semaine.<br>J'ai refusé.<br>Pas parce que c'était mal payé.<br>Parce que ça aurait tué ma crédibilité.<br>Voilà ce que j'ai appris de ce refus."</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--blue);padding:20px 24px;">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:10px;font-family:'JetBrains Mono',monospace">Contre-récit</div>
+      <div style="font-size:14px;font-style:italic;color:var(--text);line-height:1.8">"On dit que la rumba congolaise c'est de la musique du passé.<br>C'est faux.<br>Elle se réinvente en ce moment — et personne n'en parle.<br>Je vais le documenter."</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--red);padding:20px 24px;">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px;font-family:'JetBrains Mono',monospace">Teasing podcast</div>
+      <div style="font-size:14px;font-style:italic;color:var(--text);line-height:1.8">"Je prépare quelque chose.<br>Un espace où les artistes africains parlent de ce que l'industrie ne veut pas qu'on entende.<br>Pas de filtre. Pas de comm'.<br>Juste la vérité.<br>Ça vous intéresse ?"</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// DATE
+function setDate() {
+  const d = new Date();
+  const days = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'];
+  const months = ['JANVIER','FÉVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOÛT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DÉCEMBRE'];
+  document.getElementById('live-date').textContent = `${days[d.getDay()]} · ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+setDate();
+
+// TABS
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// BLOCKS
+let doneCount = 0;
+function toggleBlock(el) {
+  el.classList.toggle('done');
+  doneCount = document.querySelectorAll('.block.done').length;
+  document.getElementById('score-num').textContent = doneCount;
+}
+
+// HOOK GENERATOR
+let selectedTopic = '';
+
+function selectTopic(btn, topic) {
+  document.querySelectorAll('.hook-topic-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedTopic = topic;
+  document.getElementById('hook-btn').disabled = false;
+}
+
+async function generateHook() {
+  const btn = document.getElementById('hook-btn');
+  const output = document.getElementById('hook-output');
+  const status = document.getElementById('hook-status');
+  
+  btn.disabled = true;
+  btn.textContent = '⟳ GÉNÉRATION...';
+  output.textContent = 'L\'IA écrit ton hook...';
+  status.textContent = '';
+
+  const prompt = `Tu es un expert en copywriting Instagram pour la niche musique et culture africaine.
+
+Écris UN hook Instagram puissant (5-8 lignes maximum) sur le sujet : "${selectedTopic}"
+
+Contexte : Le créateur est @youngpablo_director, réalisateur basé à Brazzaville, Congo. Il cible une audience jeune africaine 18-30 ans. Il prépare un podcast sur l'industrie musicale africaine. Son positionnement : #fromcongototheworld.
+
+Règles strictes :
+- Commence par une phrase courte et frappante (max 8 mots)
+- Crée de la tension ou de la curiosité dès la ligne 1
+- Pas de "Bonjour", pas de "Aujourd'hui je voulais partager"
+- Une ligne = une idée
+- Termine par une phrase qui donne envie de lire la suite
+- Écris en français, ton direct et authentique
+- Ancre dans la réalité congolaise ou africaine
+
+Réponds UNIQUEMENT avec le hook, sans explication ni guillemets.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(i => i.text || '').join('').trim();
+    output.innerHTML = text.replace(/\n/g, '<br>');
+    document.getElementById('copy-hook-btn').disabled = false;
+    status.textContent = '✓ Hook généré';
+  } catch {
+    output.textContent = 'Erreur. Réessaie.';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'GÉNÉRER LE HOOK';
+}
+
+function copyHook() {
+  const text = document.getElementById('hook-output').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-hook-btn');
+    btn.textContent = '✓ COPIÉ';
+    setTimeout(() => btn.textContent = 'COPIER', 2000);
+  });
+}
+</script>
+</body>
+</html>

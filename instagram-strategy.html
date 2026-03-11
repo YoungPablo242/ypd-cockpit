@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stratégie Instagram — Musique & Culture Africaine</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --gold: #D4A017;
+    --orange: #E85D04;
+    --red: #9B2335;
+    --black: #0A0A0A;
+    --dark: #111111;
+    --card: #1A1A1A;
+    --border: #2A2A2A;
+    --text: #E8E0D0;
+    --muted: #7A7060;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: 'AFRICA';
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 200px;
+    color: transparent;
+    -webkit-text-stroke: 1px #2A2A2A;
+    pointer-events: none;
+    letter-spacing: -5px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 12px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 100px);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    color: var(--text);
+  }
+
+  h1 span { color: var(--gold); }
+
+  .subtitle {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.7;
+  }
+
+  /* NAV TABS */
+  .nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar { display: none; }
+
+  .nav-btn {
+    padding: 16px 28px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 50px 40px; }
+  .section.active { display: block; }
+
+  /* PATTERNS SECTION */
+  .patterns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .pattern-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .pattern-card:hover { border-color: var(--orange); }
+
+  .pattern-card::before {
+    content: attr(data-num);
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: #1F1F1F;
+    pointer-events: none;
+  }
+
+  .pattern-type {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  .pattern-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .pattern-card p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  /* IDEAS SECTION */
+  .ideas-list { margin-top: 30px; display: flex; flex-direction: column; gap: 16px; }
+
+  .idea-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .idea-card:hover { border-color: var(--gold); }
+
+  .idea-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 28px;
+  }
+
+  .idea-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--gold);
+    min-width: 60px;
+    line-height: 1;
+  }
+
+  .idea-meta { flex: 1; }
+
+  .idea-break {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+
+  .idea-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .idea-arrow {
+    color: var(--gold);
+    font-size: 20px;
+    transition: transform 0.3s;
+  }
+
+  .idea-card.open .idea-arrow { transform: rotate(90deg); }
+
+  .idea-body {
+    display: none;
+    padding: 0 28px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .idea-card.open .idea-body { display: block; }
+
+  .idea-tabs {
+    display: flex;
+    gap: 0;
+    margin: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .idea-tab {
+    padding: 10px 18px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .idea-tab:hover { color: var(--text); }
+  .idea-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .idea-panel { display: none; }
+  .idea-panel.active { display: block; }
+
+  .idea-panel p {
+    font-size: 13px;
+    line-height: 1.9;
+    color: #AAA090;
+  }
+
+  .idea-panel strong { color: var(--text); font-weight: 700; }
+
+  .hook-box {
+    background: #0F0F0F;
+    border-left: 3px solid var(--gold);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* REPURPOSING SECTION */
+  .repurpose-area { margin-top: 30px; }
+
+  .input-group { margin-bottom: 20px; }
+  .input-group label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    padding: 20px;
+    line-height: 1.8;
+    resize: vertical;
+    min-height: 140px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus { border-color: var(--gold); }
+
+  .generate-btn {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 16px 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .generate-btn:hover { background: var(--orange); }
+  .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .variations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .variation-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s;
+  }
+
+  .variation-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .variation-platform {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .platform-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .platform-name {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .variation-text {
+    font-size: 12px;
+    line-height: 1.9;
+    color: #AAA090;
+    white-space: pre-wrap;
+  }
+
+  .copy-btn {
+    margin-top: 16px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .copy-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .copy-btn.copied { border-color: #4CAF50; color: #4CAF50; }
+
+  .loading {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .loading.show { display: flex; }
+
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .section-title span { color: var(--gold); }
+
+  .section-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  .divider {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 20px 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    header, .section { padding: 30px 20px; }
+    .nav-btn { padding: 14px 16px; font-size: 10px; }
+    .idea-header { padding: 18px 20px; }
+    .idea-body { padding: 0 20px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Stratégie de Contenu Instagram</div>
+  <h1>CASSER<br>LES <span>PATTERNS</span></h1>
+  <p class="subtitle">Musique & Culture Africaine · Podcast · Réalisation<br>Contenus qui arrêtent le scroll sans être hors-sujet.</p>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showSection('patterns', this)">① Patterns à éviter</button>
+  <button class="nav-btn" onclick="showSection('ideas', this)">② 10 Idées de Posts</button>
+  <button class="nav-btn" onclick="showSection('repurpose', this)">③ Repurposing IA</button>
+</nav>
+
+<!-- SECTION 1 : PATTERNS -->
+<div id="patterns" class="section active">
+  <h2 class="section-title">LES <span>PIÈGES</span></h2>
+  <div class="divider"></div>
+  <p class="section-desc">Ce que tout le monde dans ta niche fait déjà. Ces formats sont saturés — l'algorithme les distribue moins, et ton audience les scrolle sans les voir.</p>
+
+  <div class="patterns-grid">
+    <div class="pattern-card" data-num="01">
+      <div class="pattern-type">Format Saturé</div>
+      <h3>Le Carousel "Top 5 artistes africains à écouter"</h3>
+      <p>Slide 1 : titre clickbait / Slides 2-6 : photo d'artiste + 3 lignes / Slide 7 : "Follow pour plus". Vu des milliers de fois. Zéro différenciation. Le lecteur sait déjà comment ça se termine avant d'avoir swipé.</p>
+    </div>
+    <div class="pattern-card" data-num="02">
+      <div class="pattern-type">Angle Prévisible</div>
+      <h3>Le "Revalorisons notre culture" sans concret</h3>
+      <p>Discours inspirant sur la richesse africaine, mais sans ancrage précis, sans histoire réelle, sans tension. Le sentiment de déjà-lu est immédiat. L'émotion ne monte jamais.</p>
+    </div>
+    <div class="pattern-card" data-num="03">
+      <div class="pattern-type">Structure Saturée</div>
+      <h3>Le post "En tant que créateur de contenu africain..."</h3>
+      <p>Accroche identitaire générique, suivie d'un listing de conseils. Ce format identitaire + tips a été massacré. Il signale "contenu générique" avant même que l'audience ait lu la suite.</p>
+    </div>
+    <div class="pattern-card" data-num="04">
+      <div class="pattern-type">Format Saturé</div>
+      <h3>Le Reel "Découverte musicale" avec audio en fond</h3>
+      <p>Vidéo de 30s, musique afrobeats, texte qui s'affiche en rythme. Beau, mais identique à 10 000 autres comptes. L'audience ne retient pas qui a posté. Zero ancrage de marque.</p>
+    </div>
+    <div class="pattern-card" data-num="05">
+      <div class="pattern-type">Angle Prévisible</div>
+      <h3>Le "Mon épisode de podcast est sorti !"</h3>
+      <p>Photo du micro ou du studio, description de l'épisode, lien en bio. Nul engagement. C'est l'équivalent d'une pub. L'audience n'a aucune raison émotionnelle de cliquer.</p>
+    </div>
+    <div class="pattern-card" data-num="06">
+      <div class="pattern-type">Structure Saturée</div>
+      <h3>Le débat "Afrobeats vs Afropop" sans prise de position</h3>
+      <p>"Et vous, qu'en pensez-vous ?" en fin de post. Technique d'engagement simulé. L'audience le détecte et ne s'implique pas. Les debates sans parti pris de l'auteur ne créent pas de communauté.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2 : IDEAS -->
+<div id="ideas" class="section">
+  <h2 class="section-title">10 IDÉES <span>DISRUPTIVES</span></h2>
+  <div class="divider"></div>
+  <p class="section-desc">Des formats qui cassent les codes de ta niche tout en restant dans l'algorithme. Chaque idée inclut le hook, le pattern cassé, et comment l'adapter.</p>
+
+  <div class="ideas-list" id="ideas-list"></div>
+</div>
+
+<!-- SECTION 3 : REPURPOSING -->
+<div id="repurpose" class="section">
+  <h2 class="section-title">REPURPOSING <span>IA</span></h2>
+  <div class="divider"></div>
+  <p class="section-desc">Colle un post Instagram ici. L'IA génère 5 variations natives pour Threads, Carousel, Reels, Stories et LinkedIn — chacune adaptée au format, jamais copiée-collée.</p>
+
+  <div class="repurpose-area">
+    <div class="input-group">
+      <label>Ton Post Instagram Original</label>
+      <textarea id="post-input" placeholder="Colle ici ton post Instagram...
+
+Exemple : 'J'ai passé 3 ans à interviewer des artistes africains pour mon podcast. Voilà ce que personne ne dit sur l'industrie musicale africaine...'"></textarea>
+    </div>
+    <button class="generate-btn" onclick="generateVariations()" id="gen-btn">GÉNÉRER 5 VARIATIONS</button>
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <span>Génération en cours...</span>
+    </div>
+    <div class="variations-grid" id="variations-grid"></div>
+  </div>
+</div>
+
+<script>
+// NAV
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// IDEAS DATA
+const ideas = [
+  {
+    num: '01',
+    break: 'Casse le carousel "liste d\'artistes"',
+    title: 'Le Dossier Détective : "J\'ai écouté 47 morceaux de [artiste] pour trouver celui que personne ne cite"',
+    hook: '"J\'ai écouté l\'intégralité de la discographie de Burna Boy.\nPas pour les hits.\nPour trouver la piste n°7 de son premier album.\nCelle que ses propres fans ignorent.\nEt ce que j\'y ai trouvé change tout ce qu\'on croit savoir sur son évolution."',
+    pourquoi: 'Le format "enquête" crée une tension narrative. L\'audience se demande ce que tu as trouvé — elle doit rester pour le savoir. C\'est du storytelling, pas une liste.',
+    comment: 'Remplace l\'artiste par n\'importe quelle figure de la musique africaine que tu connais bien. Le chiffre précis (47 morceaux, pas "plein de morceaux") donne de la crédibilité.'
+  },
+  {
+    num: '02',
+    break: 'Casse le post "épisode sorti"',
+    title: 'Le Moment Exact : "À 14 min 23 sec de mon podcast, mon invité a dit quelque chose qui m\'a mis mal à l\'aise"',
+    hook: '"À 14 min 23 sec.\nMon invité s\'est arrêté.\nA regardé le micro.\nEt a dit une phrase que j\'ai failli couper au montage.\nJe ne l\'ai pas coupée.\nVoilà pourquoi."',
+    pourquoi: 'Le timestamp précis crée une urgence. L\'audience veut entendre exactement ce moment. C\'est une promesse concrète, pas "nouvel épisode disponible". Tu vends une scène, pas un épisode.',
+    comment: 'Identifie dans chaque épisode LE moment de tension, de vérité, d\'inattendu. Construis tout le post autour de ça. Le lien en bio devient une destination, pas une obligation.'
+  },
+  {
+    num: '03',
+    break: 'Casse le "revalorisons notre culture"',
+    title: 'Le Contre-Récit Précis : "La vraie histoire du son qui a inspiré X — et que l\'Occident a mal raconté"',
+    hook: '"On dit que l\'afrobeats est né au Nigéria dans les années 90.\nC\'est vrai.\nMais incomplet.\nIl y a un musicien burkinabé dont personne ne parle.\nQui a enregistré quelque chose en 1987.\nQue Fela a écouté en boucle."',
+    pourquoi: 'La correction d\'un récit dominant arrête le scroll. "Ce qu\'on t\'a dit est incomplet" est un pattern d\'attention ultra-fort. Tu apportes de la valeur documentaire, pas de l\'inspiration vague.',
+    comment: 'Creuse dans l\'histoire musicale africaine. Chaque genre a des origines complexes. Positionne-toi comme la source qui raconte ce que les autres n\'ont pas creusé.'
+  },
+  {
+    num: '04',
+    break: 'Casse le reel "découverte musicale" générique',
+    title: 'Le Reel Anatomie : "Voilà exactement pourquoi ce riff de 4 secondes fonctionne sur ton cerveau"',
+    hook: '"Ce riff dure 4 secondes.\nMais il t\'empêche de passer à la suite.\nVoilà ce qui se passe dans ton cerveau à la seconde 2."',
+    pourquoi: 'La déconstruction technique + psychologie = contenu éducatif perçu comme premium. Tu passes de "créateur de contenu" à "expert". L\'algorithme favorise les Reels où les gens restent jusqu\'à la fin.',
+    comment: 'Prends n\'importe quel extrait musical africain viral. Décortique : le rythme, la réponse émotionnelle, la structure. Tu n\'as pas besoin d\'être musicologue — ta perspective de réalisateur suffit.'
+  },
+  {
+    num: '05',
+    break: 'Casse le débat sans prise de position',
+    title: 'L\'Opinion Clivante : "Je pense que le podcast africain francophone a un problème structurel. Voilà lequel."',
+    hook: '"Le podcast africain francophone a un problème.\nPas de manque de talent.\nPas de manque de sujets.\nUn problème de format.\nJe vais le nommer clairement."',
+    pourquoi: 'Une opinion franche avec une thèse construite génère des commentaires organiques — accord et désaccord. Ce sont les deux meilleurs signaux pour l\'algorithme. Tu crées une communauté, pas un public passif.',
+    comment: 'Formule une thèse réelle sur ton industrie. Pas pour choquer, mais parce que tu l\'observes vraiment. L\'honnêteté perçue construit plus vite que la neutralité permanente.'
+  },
+  {
+    num: '06',
+    break: 'Casse le listing "créateur de contenu"',
+    title: 'Le Journal de Bord : "Ce que personne ne montre du tournage d\'un documentaire musical en Afrique"',
+    hook: '"Jour 3 du tournage.\n5h du matin.\nOn a perdu le son de la veille.\n47 Go.\nMon caméraman dormait encore.\nJ\'ai pris la décision la plus difficile du projet."',
+    pourquoi: 'Le behind-the-scenes authentique (pas le fake BTS esthétique) crée de l\'attachement émotionnel. Tu vends l\'expérience humaine du métier, pas le métier lui-même. Ça résonne avec les jeunes qui veulent se lancer.',
+    comment: 'Utilise tes vrais projets, même ratés. Le ratio "difficultés montrées / succès affiché" doit être élevé. Plus tu montres les obstacles réels, plus ton audience fait confiance à tes succès.'
+  },
+  {
+    num: '07',
+    break: 'Casse le post inspirationnel vague',
+    title: 'Le Comparatif Inattendu : "Ce que la musique gnawa m\'a appris sur le montage vidéo"',
+    hook: '"J\'ai passé un week-end à écouter de la musique gnawa du Maroc.\nPas pour le plaisir.\nPour résoudre un problème de rythme dans un montage.\nJ\'ai trouvé la réponse dans la structure de la lila."',
+    pourquoi: 'La connexion inattendue entre deux domaines (musique traditionnelle + réalisation) est un format intellectuellement satisfaisant. Ça te positionne comme quelqu\'un qui pense différemment — donc à suivre.',
+    comment: 'Identifie des ponts entre n\'importe quel élément de culture africaine (musique, conte, cérémonie) et ton métier de réalisateur ou podcasteur. Ces connexions sont ton angle unique.'
+  },
+  {
+    num: '08',
+    break: 'Casse le reel esthétique sans substance',
+    title: 'Le Reel Data : "J\'ai analysé 200 podcasts africains. Voilà le pattern des 10 qui cartonnent."',
+    hook: '"200 épisodes de podcasts africains.\n3 semaines d\'écoute.\nUn seul pattern commun aux 10 qui dépassent 50K écoutes.\nCe n\'est pas ce que tu crois."',
+    pourquoi: 'Le chiffre concret + la promesse de révélation = combo d\'attention maximal. Le "ce n\'est pas ce que tu crois" est un déclencheur psychologique fort. Mais tu dois livrer une vraie réponse.',
+    comment: 'Tu n\'as pas besoin d\'avoir réellement écouté 200 podcasts. Mais analyse-en sincèrement une dizaine dans ta niche. La rigueur de l\'analyse prime sur la quantité.'
+  },
+  {
+    num: '09',
+    break: 'Casse le "follow pour plus de contenu"',
+    title: 'Le Post Système : "J\'ai créé un processus de 5 étapes pour trouver les artistes africains à interviewer avant qu\'ils percent"',
+    hook: '"Il y a 18 mois, j\'ai interviewé un artiste que personne ne connaissait.\nAujourd\'hui il a 2M de streams.\nCe n\'était pas du hasard.\nVoilà le système exact que j\'utilise pour les trouver."',
+    pourquoi: 'Le post "système" ou "processus" est à la fois éducatif et narratif. Il donne quelque chose d\'actionnable (valeur réelle) tout en racontant une histoire de succès. Le taux de sauvegarde est très élevé — signal fort pour l\'algo.',
+    comment: 'Chaque réalisateur et podcasteur a des processus informels. Formule-les. Donne-leur un nom. Un système nommé est mémorisable et partageable.'
+  },
+  {
+    num: '10',
+    break: 'Casse le format "nouvel épisode / nouveau projet"',
+    title: 'La Lettre Ouverte : "À tous les artistes africains qui ont refusé mon invitation sur le podcast"',
+    hook: '"Vous avez eu tort.\nPas de m\'inviter.\nVous avez eu tort de penser qu\'un podcast ne servait à rien.\nJe ne vous en veux pas.\nMais lisez ça quand même."',
+    pourquoi: 'La lettre ouverte crée une intimité immédiate. L\'adresse directe à un groupe précis (artistes africains) crée de l\'identification. C\'est subversif sans être agressif. Très fort pour la portée organique.',
+    comment: 'Adapte la destinataire à ton vécu réel. La lettre doit être honnête, pas performative. L\'authenticité de l\'émotion est ce qui fait la différence entre viral et invisible.'
+  }
+];
+
+// RENDER IDEAS
+function renderIdeas() {
+  const list = document.getElementById('ideas-list');
+  ideas.forEach((idea, i) => {
+    const card = document.createElement('div');
+    card.className = 'idea-card';
+    card.innerHTML = `
+      <div class="idea-header" onclick="toggleIdea(this.parentElement)">
+        <div class="idea-num">${idea.num}</div>
+        <div class="idea-meta">
+          <div class="idea-break">↯ ${idea.break}</div>
+          <div class="idea-title">${idea.title}</div>
+        </div>
+        <div class="idea-arrow">▶</div>
+      </div>
+      <div class="idea-body">
+        <div class="idea-tabs">
+          <button class="idea-tab active" onclick="showPanel(this, 'hook-${i}')">Hook</button>
+          <button class="idea-tab" onclick="showPanel(this, 'why-${i}')">Pourquoi ça marche</button>
+          <button class="idea-tab" onclick="showPanel(this, 'how-${i}')">Comment l'adapter</button>
+        </div>
+        <div class="idea-panel active" id="hook-${i}">
+          <div class="hook-box">${idea.hook.replace(/\n/g, '<br>')}</div>
+          <p>Ce hook est conçu pour stopper le scroll dans les 2 premières lignes. Teste-le tel quel ou adapte les détails à ton vécu réel.</p>
+        </div>
+        <div class="idea-panel" id="why-${i}">
+          <p>${idea.pourquoi}</p>
+        </div>
+        <div class="idea-panel" id="how-${i}">
+          <p>${idea.comment}</p>
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function toggleIdea(card) {
+  card.classList.toggle('open');
+}
+
+function showPanel(btn, panelId) {
+  const body = btn.closest('.idea-body');
+  body.querySelectorAll('.idea-tab').forEach(t => t.classList.remove('active'));
+  body.querySelectorAll('.idea-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// REPURPOSING
+const platforms = [
+  { name: 'Threads', icon: '🧵', color: '#1A1A1A', textColor: '#FFF' },
+  { name: 'Instagram Carousel', icon: '📸', color: '#E1306C22', textColor: '#E1306C' },
+  { name: 'Reels Caption', icon: '🎬', color: '#FF000022', textColor: '#FF6B6B' },
+  { name: 'Stories', icon: '⚡', color: '#FBAD5022', textColor: '#FBAD50' },
+  { name: 'LinkedIn', icon: '💼', color: '#0077B522', textColor: '#4DA3D9' }
+];
+
+async function generateVariations() {
+  const post = document.getElementById('post-input').value.trim();
+  if (!post) {
+    alert('Colle d\'abord ton post Instagram !');
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  const loading = document.getElementById('loading');
+  const grid = document.getElementById('variations-grid');
+
+  btn.disabled = true;
+  loading.classList.add('show');
+  grid.innerHTML = '';
+
+  const prompt = `Tu es un expert en repurposing de contenu Instagram pour la niche musique et culture africaine, podcast, réalisation vidéo. L'audience est jeune (18-30 ans).
+
+Voici le post Instagram original :
+"""
+${post}
+"""
+
+Génère 5 variations NATIVES (jamais copiées-collées) pour ces 5 plateformes :
+
+1. THREADS : Ton conversationnel, court, 1-3 paragraphes max, comme une pensée du moment
+2. INSTAGRAM CAROUSEL : Description de 5 slides avec texte pour chaque slide (slide 1 à 5)
+3. REELS CAPTION : Ultra-concis, 3-5 lignes max, punchlines, accroches directes
+4. STORIES : Format vertical interactif, question ou sondage inclus, très court
+5. LINKEDIN : Ton professionnel mais humain, insight business/créatif, 150-200 mots
+
+RÈGLES STRICTES :
+- Garde l'idée centrale identique
+- Adapte radicalement le ton, la longueur, le format
+- Chaque variation doit sembler FRAÎCHE, pas recyclée
+- Reste dans la culture africaine et la création de contenu
+- Utilise des emojis uniquement si naturel pour la plateforme
+
+Réponds UNIQUEMENT en JSON valide sans backticks, format :
+{"variations": [{"platform": "Threads", "content": "..."}, {"platform": "Instagram Carousel", "content": "..."}, {"platform": "Reels Caption", "content": "..."}, {"platform": "Stories", "content": "..."}, {"platform": "LinkedIn", "content": "..."}]}`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content.map(i => i.text || '').join('');
+    
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      const clean = text.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+    }
+
+    loading.classList.remove('show');
+    btn.disabled = false;
+
+    parsed.variations.forEach((v, i) => {
+      const plat = platforms[i] || platforms[0];
+      const card = document.createElement('div');
+      card.className = 'variation-card';
+      card.innerHTML = `
+        <div class="variation-platform">
+          <div class="platform-icon" style="background:${plat.color}">${plat.icon}</div>
+          <div class="platform-name" style="color:${plat.textColor}">${v.platform}</div>
+        </div>
+        <div class="variation-text">${v.content}</div>
+        <button class="copy-btn" onclick="copyText(this, \`${v.content.replace(/`/g, "'")}\`)">COPIER</button>
+      `;
+      grid.appendChild(card);
+      setTimeout(() => card.classList.add('visible'), i * 100);
+    });
+
+  } catch (err) {
+    loading.classList.remove('show');
+    btn.disabled = false;
+    grid.innerHTML = '<p style="color:#E85D04;font-size:13px;">Erreur de génération. Réessaie dans un instant.</p>';
+  }
+}
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ COPIÉ';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'COPIER';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// INIT
+renderIdeas();
+</script>
+</body>
+</html>

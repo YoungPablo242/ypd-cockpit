@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Young Pablo Director — Plan de Lancement</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,300;0,700;1,300;1,700&display=swap');
+
+  :root {
+    --bg: #F5F0E8;
+    --ink: #1A1410;
+    --red: #C0392B;
+    --green: #009A44;
+    --gold: #D4A017;
+    --card: #FFFFFF;
+    --border: #D8D0C0;
+    --muted: #8A7F70;
+    --accent: #E85D04;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 60px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 300px; height: 100%;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(212,160,23,0.15) 8px,
+      rgba(212,160,23,0.15) 16px
+    );
+  }
+
+  .flag {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+  }
+
+  .flag-stripe {
+    width: 24px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  .handle {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  h1 em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: #7A7060;
+    margin-top: 16px;
+    line-height: 1.7;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+
+  .stat { }
+  .stat-num {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 36px;
+    color: var(--bg);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7A7060;
+  }
+
+  /* DIAGNOSIS */
+  .diagnosis {
+    padding: 50px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 4px 12px;
+    margin-bottom: 24px;
+  }
+
+  .section-label.green { color: var(--green); border-color: var(--green); }
+  .section-label.gold { color: var(--gold); border-color: var(--gold); }
+  .section-label.accent { color: var(--accent); border-color: var(--accent); }
+
+  h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 36px;
+    margin-bottom: 30px;
+    line-height: 1.1;
+  }
+
+  .diag-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 700px) {
+    .diag-grid { grid-template-columns: 1fr; }
+    header, .diagnosis, section { padding: 30px 24px !important; }
+    .stats-row { gap: 24px; }
+  }
+
+  .diag-card {
+    padding: 24px;
+    border: 1px solid var(--border);
+    background: white;
+    position: relative;
+  }
+
+  .diag-card.problem { border-left: 3px solid var(--red); }
+  .diag-card.asset { border-left: 3px solid var(--green); }
+
+  .diag-type {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .problem .diag-type { color: var(--red); }
+  .asset .diag-type { color: var(--green); }
+
+  .diag-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .diag-card p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  /* BIO FIX */
+  section {
+    padding: 50px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bio-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 600px) {
+    .bio-compare { grid-template-columns: 1fr; }
+  }
+
+  .bio-box {
+    padding: 24px;
+    border: 1px solid var(--border);
+    background: white;
+  }
+
+  .bio-box.before { opacity: 0.6; }
+  .bio-box.after { border-color: var(--green); }
+
+  .bio-tag {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .before .bio-tag { color: var(--red); }
+  .after .bio-tag { color: var(--green); }
+
+  .bio-text {
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-line;
+  }
+
+  .bio-note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* PLAN DE CONTENU */
+  .week-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .week {
+    background: white;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .week-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+
+  .week-header:hover { background: #FAF7F2; }
+
+  .week-num {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 32px;
+    color: var(--gold);
+    min-width: 50px;
+    line-height: 1;
+  }
+
+  .week-meta { flex: 1; }
+
+  .week-theme {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .week-title {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .week-arrow {
+    color: var(--gold);
+    transition: transform 0.3s;
+    font-size: 18px;
+  }
+
+  .week.open .week-arrow { transform: rotate(90deg); }
+
+  .week-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 0;
+  }
+
+  .week.open .week-body { display: block; }
+
+  .day-row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    align-items: start;
+    gap: 20px;
+    padding: 18px 24px;
+    border-bottom: 1px solid #F0EBE0;
+  }
+
+  .day-row:last-child { border-bottom: none; }
+
+  .day-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 2px;
+  }
+
+  .day-content h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .day-content p {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .post-hook {
+    background: var(--bg);
+    border-left: 2px solid var(--gold);
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .format-tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .fmt-post { color: var(--accent); border-color: var(--accent); }
+  .fmt-carousel { color: #8B5CF6; border-color: #8B5CF6; }
+  .fmt-reel { color: var(--red); border-color: var(--red); }
+
+  /* REGLES */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .rule-card {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 24px;
+  }
+
+  .rule-num {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 48px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .rule-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .rule-card p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: #9A9080;
+  }
+
+  /* CHECKLIST */
+  .checklist {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 20px;
+    background: white;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .check-item:hover { border-color: var(--green); }
+
+  .check-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .check-item.done .check-box {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+    font-size: 12px;
+  }
+
+  .check-item.done { opacity: 0.6; }
+
+  .check-text {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .check-text strong { font-weight: 700; display: block; }
+  .check-text span { font-size: 11px; color: var(--muted); }
+
+  /* PROGRESS */
+  .progress-bar {
+    background: var(--border);
+    height: 4px;
+    border-radius: 2px;
+    margin: 20px 0 8px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    width: 0%;
+    transition: width 0.4s;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag">
+    <div class="flag-stripe" style="background:#009A44"></div>
+    <div class="flag-stripe" style="background:#FBDE4A"></div>
+    <div class="flag-stripe" style="background:#DC241F"></div>
+  </div>
+  <div class="handle">@youngpablo_director · Brazzaville, Congo</div>
+  <h1>Plan de <em>Lancement</em><br>Instagram</h1>
+  <p class="header-sub">Contenu 100% écrit · Phase 0 (sans matos podcast)<br>#fromcongototheworld</p>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num">936</div>
+      <div class="stat-label">Followers actuels</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">55</div>
+      <div class="stat-label">Publications</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1485</div>
+      <div class="stat-label">Meilleure vue (BTS clip)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4 sem.</div>
+      <div class="stat-label">Durée du plan</div>
+    </div>
+  </div>
+</header>
+
+<!-- DIAGNOSTIC -->
+<div class="diagnosis">
+  <div class="section-label">① Diagnostic honnête</div>
+  <h2>Ce qui ne marche pas<br>— et ce qui peut marcher</h2>
+  <div class="diag-grid">
+    <div class="diag-card problem">
+      <div class="diag-type">Problème</div>
+      <h3>Bio trop dispersée</h3>
+      <p>Réalisateur + Photographe + Créateur + Designer. Pour l'algorithme et l'audience : tu n'es rien de précis. Personne ne sait pourquoi te suivre.</p>
+    </div>
+    <div class="diag-card problem">
+      <div class="diag-type">Problème</div>
+      <h3>Contenu sans fil directeur</h3>
+      <p>Selfies, flyers Canal+, vaccination, BTS de tournage. L'audience ne sait pas à quoi s'attendre de toi. Zéro raison de rester abonnée.</p>
+    </div>
+    <div class="diag-card problem">
+      <div class="diag-type">Problème</div>
+      <h3>Zéro identité "podcast"</h3>
+      <p>Ton projet podcast n'existe pas encore sur le compte. Aucun teasing, aucun univers posé. Tu pars de zéro perceptif, même pour tes abonnés existants.</p>
+    </div>
+    <div class="diag-card asset">
+      <div class="diag-type">Atout</div>
+      <h3>Le BTS clip à 1485 vues</h3>
+      <p>C'est TON signal. Le behind-the-scenes de réalisation est ce que ton audience veut. Tu as la preuve. Il faut en faire le cœur de ta stratégie.</p>
+    </div>
+    <div class="diag-card asset">
+      <div class="diag-type">Atout</div>
+      <h3>Ancrage Congo fort</h3>
+      <p>#fromcongototheworld est une promesse puissante. La culture congolaise (rumba, ndombolo, scène créative de Brazza) est un angle éditorial rare et crédible.</p>
+    </div>
+    <div class="diag-card asset">
+      <div class="diag-type">Atout</div>
+      <h3>Métier réel = contenu réel</h3>
+      <p>Tu es réalisateur sur le terrain. Tu travailles avec des artistes, des productions, des équipes. C'est du contenu authentique que les autres n'ont pas.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BIO FIX -->
+<section>
+  <div class="section-label green">② Correction immédiate</div>
+  <h2>Refais ta bio<br>ce soir</h2>
+  <div class="bio-compare">
+    <div class="bio-box before">
+      <div class="bio-tag">Avant — Trop vague</div>
+      <div class="bio-text">Réalisation 🎥🎬
+Réalisateur || Photographe 📷 ||
+Créateur de contenu || Designer 🧸 ||
+KRYPTONITE
+#fromcongototheworld 🇨🇬🌍</div>
+      <div class="bio-note">Problème : 4 métiers = 0 positionnement clair</div>
+    </div>
+    <div class="bio-box after">
+      <div class="bio-tag">Après — Net et mémorable</div>
+      <div class="bio-text">Réalisateur · Brazzaville 🇨🇬
+Je documente la scène créative africaine
+Clips · Documentaires · Bientôt : Podcast
+#FromCongoToTheWorld
+↓ Mon prochain projet</div>
+      <div class="bio-note">✓ Un métier principal · ✓ Une mission · ✓ Un teasing podcast · ✓ CTA</div>
+    </div>
+  </div>
+</section>
+
+<!-- PLAN 4 SEMAINES -->
+<section>
+  <div class="section-label accent">③ Plan de contenu</div>
+  <h2>4 semaines · 3 posts/sem.<br>100% texte écrit</h2>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:8px;line-height:1.7">Clique sur chaque semaine pour voir les posts détaillés avec hooks prêts à copier.</p>
+
+  <div class="week-grid">
+
+    <!-- SEMAINE 1 -->
+    <div class="week" id="w1">
+      <div class="week-header" onclick="toggleWeek('w1')">
+        <div class="week-num">S1</div>
+        <div class="week-meta">
+          <div class="week-theme">Semaine 1 — Poser les bases</div>
+          <div class="week-title">Qui tu es et ce que tu vois</div>
+        </div>
+        <div class="week-arrow">▶</div>
+      </div>
+      <div class="week-body">
+        <div class="day-row">
+          <div class="day-label">Lundi</div>
+          <div class="day-content">
+            <h4>Le Post de Repositionnement</h4>
+            <p>Tu te réintroduis — pas comme "créateur de contenu", mais comme réalisateur avec une mission précise. C'est ton post de rupture avec le passé.</p>
+            <div class="post-hook">"J'ai 936 abonnés et je recommence à zéro.
+Pas le compte. La manière de l'utiliser.
+Voilà ce que vous allez voir ici désormais — et pourquoi."</div>
+          </div>
+          <div><span class="format-tag fmt-post">Post</span></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Mercredi</div>
+          <div class="day-content">
+            <h4>L'Opinion Clivante #1</h4>
+            <p>Prends position sur quelque chose dans l'industrie musicale congolaise ou africaine. Pas pour choquer — parce que tu l'observes vraiment.</p>
+            <div class="post-hook">"La scène musicale de Brazzaville a un problème.
+Pas de manque de talent.
+Un problème de visibilité que personne ne veut nommer.
+Je vais le dire."</div>
+          </div>
+          <div><span class="format-tag fmt-post">Post</span></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Vendredi</div>
+          <div class="day-content">
+            <h4>Le Journal de Bord #1</h4>
+            <p>Un moment réel de ton métier. Une décision difficile, une surprise sur un tournage. Quelque chose que personne d'autre ne peut raconter.</p>
+            <div class="post-hook">"Sur un tournage, j'ai dû choisir entre la perfection et le respect d'un artiste.
+J'ai choisi le respect.
+Voilà ce que ça a changé dans ma façon de travailler."</div>
+          </div>
+          <div><span class="format-tag fmt-carousel">Carousel</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEMAINE 2 -->
+    <div class="week" id="w2">
+      <div class="week-header" onclick="toggleWeek('w2')">
+        <div class="week-num">S2</div>
+        <div class="week-meta">
+          <div class="week-theme">Semaine 2 — Montrer l'expertise</div>
+          <div class="week-title">Ce que tu sais que les autres ignorent</div>
+        </div>
+        <div class="week-arrow">▶</div>
+      </div>
+      <div class="week-body">
+        <div class="day-row">
+          <div class="day-label">Lundi</div>
+          <div class="day-content">
+            <h4>Le Contre-Récit Musical</h4>
+            <p>Corrige un mythe sur la musique africaine / congolaise. Quelque chose que tout le monde dit — et que toi tu sais être incomplet ou faux.</p>
+            <div class="post-hook">"On dit que la rumba congolaise est un genre du passé.
+C'est faux.
+Elle se réinvente en ce moment — et personne n'en parle à Brazzaville."</div>
+          </div>
+          <div><span class="format-tag fmt-carousel">Carousel</span></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Mercredi</div>
+          <div class="day-content">
+            <h4>Le Système du Réalisateur</h4>
+            <p>Explique ton processus de travail avec un artiste — de la première conversation au rendu final. Ce que les clients ne voient pas.</p>
+            <div class="post-hook">"Voilà les 5 questions que je pose à chaque artiste avant de tourner son clip.
+La 3ème change tout.
+Et 90% des réalisateurs ne la posent jamais."</div>
+          </div>
+          <div><span class="format-tag fmt-carousel">Carousel</span></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Vendredi</div>
+          <div class="day-content">
+            <h4>Le Teasing Podcast #1</h4>
+            <p>Première mention publique du podcast. Pas une annonce — une question qui intrigue ton audience et la prépare à ce qui arrive.</p>
+            <div class="post-hook">"J'ai une question pour les artistes de Brazzaville.
+Vous seriez prêts à parler de ce que l'industrie ne veut pas qu'on entende ?
+Je prépare quelque chose. Et j'ai besoin de vous."</div>
+          </div>
+          <div><span class="format-tag fmt-post">Post</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEMAINE 3 -->
+    <div class="week" id="w3">
+      <div class="week-header" onclick="toggleWeek('w3')">
+        <div class="week-num">S3</div>
+        <div class="week-meta">
+          <div class="week-theme">Semaine 3 — Construire la communauté</div>
+          <div class="week-title">Impliquer, pas juste informer</div>
+        </div>
+        <div class="week-arrow">▶</div>
+      </div>
+      <div class="week-body">
+        <div class="day-row">
+          <div class="day-label">Lundi</div>
+          <div class="day-content">
+            <h4>La Lettre Ouverte</h4>
+            <p>Écris directement aux artistes africains / congolais. Dis-leur quelque chose d'honnête que personne d'autre dans leur entourage ne dit.</p>
+            <div class="post-hook">"Aux artistes de Brazzaville qui croient que la vidéo c'est un luxe.
+Vous avez tort.
+Pas parce que j'en vis. Parce que j'ai vu ce qu'une mauvaise vidéo coûte vraiment."</div>
+          </div>
+          <div><span class="format-tag fmt-post">Post</span></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Mercredi</div>
+          <div class="day-content">
+            <h4>Le Comparatif Inattendu</h4>
+            <p>Connecte un élément de culture congolaise (musique, danse, conte) avec ton métier de réalisateur. Un pont que personne n'a fait avant toi.</p>
+            <div class="post-hook">"Le ndombolo m'a appris à monter une vidéo.
+Pas métaphoriquement.
+Littéralement. Je m'explique."</div>
+          </div>
+          <div><span class="format-tag fmt-carousel">Carousel</span></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Vendredi</div>
+          <div class="day-content">
+            <h4>Le Journal de Bord #2</h4>
+            <p>Un échec ou une frustration réelle. Montre le côté dur du métier. C'est ce qui crée la confiance — pas les succès affichés.</p>
+            <div class="post-hook">"J'ai perdu un client cette semaine.
+Parce que j'ai refusé de faire un truc que je savais mauvais.
+Voilà pourquoi je recommencerais exactement pareil."</div>
+          </div>
+          <div><span class="format-tag fmt-post">Post</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEMAINE 4 -->
+    <div class="week" id="w4">
+      <div class="week-header" onclick="toggleWeek('w4')">
+        <div class="week-num">S4</div>
+        <div class="week-meta">
+          <div class="week-theme">Semaine 4 — Lancer le podcast</div>
+          <div class="week-title">Transformer l'audience en attente</div>
+        </div>
+        <div class="week-arrow">▶</div>
+      </div>
+      <div class="week-body">
+        <div class="day-row">
+          <div class="day-label">Lundi</div>
+          <div class="day-content">
+            <h4>L'Annonce du Podcast (sans matos)</h4>
+            <p>Tu annonces le podcast officiellement — nom, concept, qui tu veux interviewer. Pas besoin de micro pour ça. L'idée suffit.</p>
+            <div class="post-hook">"Mon podcast n'existe pas encore.
+Mais il va parler de ceux qu'on n'entend jamais dans l'industrie musicale africaine.
+Les artistes. Pas les labels. Pas les managers.
+Le nom arrive bientôt."</div>
+          </div>
+          <div><span class="format-tag fmt-post">Post</span></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Mercredi</div>
+          <div class="day-content">
+            <h4>Le Dossier Détective</h4>
+            <p>Analyse en profondeur un artiste congolais/africain — un angle que personne n'a traité. Tu montres que le podcast va avoir du fond.</p>
+            <div class="post-hook">"J'ai réécouté toute la discographie de [artiste congolais].
+Pas pour les hits.
+Pour le morceau que ses fans eux-mêmes ont raté.
+Et ce que j'y ai trouvé dit tout sur la scène de Brazza."</div>
+          </div>
+          <div><span class="format-tag fmt-carousel">Carousel</span></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Vendredi</div>
+          <div class="day-content">
+            <h4>L'Appel à Invités</h4>
+            <p>Tu cherches ton premier invité publiquement. C'est du contenu ET une action réelle. L'audience devient actrice de ton lancement.</p>
+            <div class="post-hook">"Je cherche le premier invité de mon podcast.
+Pas forcément le plus connu.
+Le plus honnête.
+Nomme quelqu'un dans les commentaires — et explique pourquoi."</div>
+          </div>
+          <div><span class="format-tag fmt-post">Post</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RÈGLES -->
+<section>
+  <div class="section-label">④ Règles absolues</div>
+  <h2>Ce que tu ne feras<br>plus jamais</h2>
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-num">✕1</div>
+      <h3>Plus de flyers d'autres personnes</h3>
+      <p>Le flyer Canal+, la pub vaccination — ça dilue ton identité. Chaque post doit parler de TON univers.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">✕2</div>
+      <h3>Plus de selfie sans contexte</h3>
+      <p>La photo miroir sans caption = post invisible. Si tu postes une photo de toi, elle a besoin d'une histoire autour.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">✕3</div>
+      <h3>Plus de "nouvel épisode disponible"</h3>
+      <p>Quand le podcast existera : ne poste jamais ça. Poste LE MOMENT, LE TIMESTAMP, LA PHRASE qui va faire venir les gens.</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">✕4</div>
+      <h3>Plus de post sans hook</h3>
+      <p>Les 2 premières lignes décident de tout. Si ton post commence par "Bonjour" ou "Aujourd'hui je voulais partager" — réécris.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CHECKLIST DÉMARRAGE -->
+<section>
+  <div class="section-label green">⑤ À faire maintenant</div>
+  <h2>Checklist de démarrage<br>— cette semaine</h2>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  <div class="progress-label" id="progress-label">0 / 7 complété</div>
+
+  <div class="checklist" id="checklist">
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Modifier la bio Instagram</strong>
+        <span>Utilise la version "après" ci-dessus — 10 minutes max</span>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Trouver un nom pour le podcast</strong>
+        <span>Écris 5 options, choisis la plus simple et mémorable</span>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Écrire le Post S1-Lundi (repositionnement)</strong>
+        <span>Copie le hook, adapte avec tes vrais mots, publie</span>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Supprimer ou archiver les posts hors-sujet</strong>
+        <span>Flyers, vaccination, selfies sans contexte — archive, ne supprime pas</span>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Identifier 3 artistes potentiels à interviewer</strong>
+        <span>Peu importe le niveau de notoriété — l'honnêteté prime</span>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Créer un fichier "idées de posts"</strong>
+        <span>Notes, Apple Notes, peu importe — un endroit unique pour tes hooks</span>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Bloquer 3 créneaux/semaine dans ton agenda</strong>
+        <span>Lundi · Mercredi · Vendredi — même horaire chaque semaine</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleWeek(id) {
+  const week = document.getElementById(id);
+  week.classList.toggle('open');
+}
+
+function toggleCheck(item) {
+  item.classList.toggle('done');
+  if (item.querySelector('.check-box').textContent === '✓') {
+    item.querySelector('.check-box').textContent = '';
+  } else {
+    item.querySelector('.check-box').textContent = '✓';
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('.check-item').length;
+  const done = document.querySelectorAll('.check-item.done').length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = done + ' / ' + total + ' complété';
+}
+</script>
+</body>
+</html>
